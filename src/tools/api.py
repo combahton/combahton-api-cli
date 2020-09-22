@@ -3,6 +3,7 @@ import requests
 import json
 
 import logging
+logging.basicConfig()
 logger = logging.getLogger(__name__)
 
 config = ConfigParser()
@@ -12,7 +13,8 @@ class ApiRequest():
     def __init__(self):
         if config.has_section("core"):
             if config.has_option("core","verbosity"):
-                logger.setLevel(logging.getLevelName(config.get("core","verbosity")))
+                level = logging.getLevelName(config.get("core","verbosity"))
+                logger.setLevel(level)
         pass
     
     def request(self, **kwargs):
