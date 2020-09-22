@@ -1,6 +1,6 @@
 import click
 import json
-from tools.api import ApiRequest
+from tools.api import ApiRequest # pylint: disable=import-error
 
 def confirmCallback(ctx, param, value):
     if not value:
@@ -27,16 +27,6 @@ def invoice_unpaid():
         click.echo("You have no unpaid invoices.")
     else:
         click.echo(invoices)
-
-@click.command()
-@click.argument('id')
-def invoice(id):
-    api = ApiRequest()
-    request = api.request(component = "customer", method = "invoices", action = "view", id = id)
-    print(request.text)
-    """with open(("%s.pdf" % id), "w") as fileHandle:
-        fileHandle.write(request.text)
-        click.echo("Invoice saved as %s.pdf" % id)"""
 
 @click.command()
 @click.option('-c', is_flag=True, default = False)
@@ -84,12 +74,10 @@ def contract_extend(id):
 
 @click.command()
 @click.argument('id')
-@click.option('--enable', is_flag=True, default=False)
-def contract_autoextend(id, enable):
-    """Modifies auto-extension for the given contract.
-    Default action is disabling auto-extend.
-    To enable, pass --enable"""
-    switch = ("enable" if enable else "disable")
+@click.argument('toggle', type=click.BOOL)
+def contract_autoextend(id, toggle):
+    """Modifies auto-extension for the given contract."""
+    switch = ("enable" if toggle else "disable")
     api = ApiRequest()
     request = api.request(component = "customer", method = "contract", action = "autoextend", id = id, switch = switch)
     contracts = json.loads(request.text)
@@ -113,7 +101,6 @@ def contract_order(product):
 
 customer.add_command(invoice_all)
 customer.add_command(invoice_unpaid)
-customer.add_command(invoice)
 customer.add_command(credits)
 customer.add_command(contract)
 customer.add_command(contract_all)
