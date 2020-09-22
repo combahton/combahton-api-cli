@@ -10,6 +10,7 @@ cfgfile = ConfigParser()
 cfgfile.read('config.ini')
 
 import logging
+logging.basicConfig()
 logger = logging.getLogger(__name__)
 
 from modules.antiddos import commands as antiddos
