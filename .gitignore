@@ -3,4 +3,6 @@ dist/
 __pycache__/
 *.pyc
 config.ini
+config_*.ini
 env/
+.vscode/
