@@ -1,45 +1,33 @@
-import click
+import logging
 from configparser import ConfigParser
+import click
 
 cfgfile = ConfigParser()
-cfgfile.read('config.ini')
+cfgfile.read("config.ini")
 
-@click.group()
-def config():
-    """configuration module"""
-    pass
+logging.basicConfig(
+    level=logging.getLevelName(cfgfile.get("core", "verbose"))
+    if cfgfile.has_option("core", "verbose")
+    else logging.INFO
+)
+logger = logging.getLogger(__name__)
 
-@click.command()
-@click.argument('index')
-@click.argument('value')
-def set(index, value):
-    """Set parameters for config"""
-    namespace, key = index.split('.', 1)
-    with open("config.ini", "w") as f:
-        if not cfgfile.has_section(namespace):
-            cfgfile.add_section(namespace)
-        cfgfile.set(namespace, key, value)
-        cfgfile.write(f)
 
 @click.command()
-@click.argument('namespace')
-def get(namespace):
-    """Show namespace from config"""
-    if not cfgfile.has_section(namespace):
-        click.echo("Namespace not found.")
+@click.argument("index")
+@click.argument("value", default="")
+def config(index, value):
+    """Configuration Module
+
+    Read from config: cbcli config user.email
+
+    Write to config: cbcli config user.email test@example.com"""
+    namespace, key = index.split(".", 1)
+    if value == "" and namespace and key and cfgfile.has_option(namespace, key):
+        click.echo(cfgfile.get(namespace, key))
     else:
-        for item in cfgfile.items(namespace):
-            click.echo(namespace + "." + item[0] + ": " + item[1])
-
-@click.command()
-def clear():
-    """Remove stored credentials from config.ini"""
-    if cfgfile.has_section('api'):
-        with open('config.ini', 'w') as f:
-            f.write("")
-    else:
-        click.echo("There were no credentials stored.") 
-
-config.add_command(set)
-config.add_command(get)
-config.add_command(clear)
+        with open("config.ini", "w") as file:
+            if not cfgfile.has_section(namespace):
+                cfgfile.add_section(namespace)
+            cfgfile.set(namespace, key, value)
+            cfgfile.write(file)

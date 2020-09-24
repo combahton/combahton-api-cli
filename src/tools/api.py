@@ -1,38 +1,46 @@
+import logging
 from configparser import ConfigParser
 import requests
-import json
 
-import logging
-logging.basicConfig()
+cfgfile = ConfigParser()
+cfgfile.read("config.ini")
+
+logging.basicConfig(
+    level=logging.getLevelName(cfgfile.get("core", "verbose"))
+    if cfgfile.has_option("core", "verbose")
+    else logging.INFO
+)
 logger = logging.getLogger(__name__)
 
-config = ConfigParser()
-config.read('config.ini')
 
-class ApiRequest():
+class ApiRequest:  # pylint: disable=too-few-public-methods
+    """
+    Provides direct access to api.combahton.net in a simple, yet intuitive way.
+    """
+
     def __init__(self):
-        if config.has_section("core"):
-            if config.has_option("core","verbosity"):
-                level = logging.getLevelName(config.get("core","verbosity"))
-                logger.setLevel(level)
-        pass
-    
+        self.email = ""
+        self.key = ""
+
     def request(self, **kwargs):
-        if config.has_section('user'):
-            self.email = config.get('user', 'email')
-            self.key = config.get('user', 'key')
+        """Used to send a request to api.combahton.net with **kwargs"""
+        if cfgfile.has_section("user"):
+            self.email = cfgfile.get("user", "email")
+            self.key = cfgfile.get("user", "key")
         else:
-            raise Exception("You haven't added your credentials yet.\nPlease provide your API credentials, use:\n\tcbcli config set user.email <email>\n\tcbcli config set user.key <api-key>")
+            raise Exception(
+                "You haven't added your credentials yet.\nPlease provide your API credentials, use:\n\tcbcli config set user.email <email>\n\tcbcli config set user.key <api-key>"
+            )
 
-        postData = {}  
-        postData["email"] = self.email
-        postData["secret"] = self.key
+        post_data = {}
+        post_data["email"] = self.email
+        post_data["secret"] = self.key
         for key, value in kwargs.items():
-            postData[key] = value
-        
-        logger.debug("[Verbose] Follwing data will be sent:")
-        for key, value in postData.items():
-            logger.debug("%s == %s" % (key, value))
+            post_data[key] = value
 
-        req = requests.post("https://api.combahton.net/v2", json = postData)
+        logger.debug("[Verbose] Follwing data will be sent:")
+        for key, value in post_data.items():
+            logger.debug("%s == %s", key, value)
+
+        req = requests.post("https://api.combahton.net/v2", json=post_data)
         return req
