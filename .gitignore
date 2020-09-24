@@ -4,5 +4,5 @@ __pycache__/
 *.pyc
 config.ini
 config_*.ini
-env/
+venv/
 .vscode/
