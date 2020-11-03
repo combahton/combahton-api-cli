@@ -1,7 +1,7 @@
 import logging
 import requests
 
-from tools.config import cfgfile  # pylint: disable=import-error
+from tools.config import cfgfile, VERSION  # pylint: disable=import-error
 
 logging.basicConfig(
     level=logging.getLevelName(cfgfile.get("core", "verbose"))
@@ -19,6 +19,7 @@ class ApiRequest:  # pylint: disable=too-few-public-methods
     def __init__(self):
         self.email = ""
         self.key = ""
+        self.headers = {"User-Agent": "cbcli/{}".format(VERSION)}
 
     def request(self, **kwargs):
         """Used to send a request to api.combahton.net with **kwargs"""
@@ -40,5 +41,7 @@ class ApiRequest:  # pylint: disable=too-few-public-methods
         for key, value in post_data.items():
             logger.debug("%s == %s", key, value)
 
-        req = requests.post("https://api.combahton.net/v2", json=post_data)
+        req = requests.post(
+            "https://api.combahton.net/v2", json=post_data, headers=self.headers
+        )
         return req

@@ -3,6 +3,8 @@ import os
 import sys
 from configparser import ConfigParser
 
+VERSION = "1.0.0-beta.1"
+
 # defaultConfigPath = pathlib.Path.joinpath(
 # pathlib.Path(__file__).parent.absolute(), "config.ini"
 # )
