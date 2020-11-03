@@ -1,11 +1,8 @@
 import logging
 import json
-from configparser import ConfigParser
 import click
 from tools.api import ApiRequest  # pylint: disable=import-error
-
-cfgfile = ConfigParser()
-cfgfile.read("config.ini")
+from tools.config import cfgfile  # pylint: disable=import-error
 
 logging.basicConfig(
     level=logging.getLevelName(cfgfile.get("core", "verbose"))

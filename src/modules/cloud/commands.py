@@ -5,9 +5,7 @@ from configparser import ConfigParser
 import click
 from tabulate import tabulate
 from tools.api import ApiRequest  # pylint: disable=import-error
-
-cfgfile = ConfigParser()
-cfgfile.read("config.ini")
+from tools.config import cfgfile  # pylint: disable=import-error
 
 logging.basicConfig(
     level=logging.getLevelName(cfgfile.get("core", "verbose"))
@@ -33,7 +31,7 @@ def view(contract, raw):
     request = api.request(component="kvm", method="server", action="view", id=contract)
     response = json.loads(request.text)
     if raw:
-        click.echo(response)
+        click.echo(request.text)
     else:
         if response and response["status"] == "id_unauthenticated":
             logger.error("Access denied: You are not allowed to modify %s", contract)
@@ -53,7 +51,7 @@ def stop(contract, raw):
     )
     response = json.loads(request.text)
     if raw:
-        click.echo(response)
+        click.echo(request.text)
     else:
         if (
             response
@@ -77,7 +75,7 @@ def start(contract, raw):
     )
     response = json.loads(request.text)
     if raw:
-        click.echo(response)
+        click.echo(request.text)
     else:
         if (
             response
@@ -101,7 +99,7 @@ def reset(contract, raw):
     )
     response = json.loads(request.text)
     if raw:
-        click.echo(response)
+        click.echo(request.text)
     else:
         if (
             response
@@ -141,7 +139,7 @@ def vnc(contract, clientip, raw):
     )
     response = json.loads(request.text)
     if raw:
-        click.echo(json.dumps(response))
+        click.echo(request.text)
     else:
         if (
             response
@@ -173,7 +171,7 @@ def list_templates(raw):
     )
     response = json.loads(request.text)
     if raw:
-        click.echo(response)
+        click.echo(request.text)
     else:
         click.echo(tabulate(response, headers="keys"))
 
@@ -192,7 +190,7 @@ def run(contract, template_id, raw):
     )
     response = json.loads(request.text)
     if raw:
-        click.echo(response)
+        click.echo(request.text)
     else:
         if response and "status" in response:
             if response["status"] == "id_unauthenticated":

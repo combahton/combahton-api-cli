@@ -5,9 +5,7 @@ from configparser import ConfigParser
 import click
 from tabulate import tabulate
 from tools.api import ApiRequest  # pylint: disable=import-error
-
-cfgfile = ConfigParser()
-cfgfile.read("config.ini")
+from tools.config import cfgfile  # pylint: disable=import-error
 
 logging.basicConfig(
     level=logging.getLevelName(cfgfile.get("core", "verbose"))
@@ -43,7 +41,7 @@ def fv3(ipv4, toggle, raw):
         )
         response = json.loads(request.text)
         if raw:
-            click.echo(response)
+            click.echo(request.text)
         else:
             if response and response["status"] == "routing_changed":
                 logger.info("Routing changed")
@@ -74,7 +72,7 @@ def status(ipv4, raw):
                 logger.error("Access denied: You are not allowed to modify %s", ipaddr)
         else:
             if raw:
-                click.echo(response)
+                click.echo(request.text)
             else:
                 res = []
                 for key, val in response.items():
@@ -182,7 +180,7 @@ def l7_domain_add(domain, protection, raw):
         )
         response = json.loads(request.text)
         if raw:
-            click.echo(response)
+            click.echo(request.text)
         elif response and "status" in response:
             if response["status"] == "id_unauthenticated":
                 logger.error("Access denied: You are not allowed to modify %s", domain)
@@ -210,7 +208,7 @@ def l7_domain_delete(domain, raw):
         )
         response = json.loads(request.text)
         if raw:
-            click.echo(response)
+            click.echo(request.text)
         elif response and "status" in response:
             if response["status"] == "id_unauthenticated":
                 logger.error("Access denied: You are not allowed to modify %s", domain)
@@ -250,7 +248,7 @@ def l7_ssl_add(domain, certificate, privatekey, protection, raw):
                 )
                 response = json.loads(request.text)
                 if raw:
-                    click.echo(response)
+                    click.echo(request.text)
                 elif response and "status" in response:
                     if response["status"] == "id_unauthenticated":
                         logger.info(response)
@@ -285,7 +283,7 @@ def l7_ssl_remove(domain, raw):
         )
         response = json.loads(request.text)
         if raw:
-            click.echo(response)
+            click.echo(request.text)
         elif response and "status" in response:
             if response["status"] == "id_unauthenticated":
                 logger.error("Access denied: You are not allowed to modify %s", domain)
@@ -311,7 +309,7 @@ def l7_ssl_view(raw):
             logger.debug(response["status"])
         else:
             if raw:
-                click.echo(response)
+                click.echo(request.text)
             else:
                 click.echo(tabulate(response, headers="keys"))
     except:
@@ -339,7 +337,7 @@ def incidents_single(ipv4, raw):
         )
         response = json.loads(request.text)
         if raw:
-            click.echo(response)
+            click.echo(request.text)
         else:
             click.echo(tabulate(response, headers="keys"))
     except ValueError:
@@ -359,7 +357,7 @@ def incidents_all(raw):
         )
         response = json.loads(request.text)
         if raw:
-            click.echo(response)
+            click.echo(request.text)
         else:
             click.echo(tabulate(response, headers="keys"))
     except:

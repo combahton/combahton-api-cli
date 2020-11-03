@@ -1,9 +1,7 @@
 import logging
-from configparser import ConfigParser
 import requests
 
-cfgfile = ConfigParser()
-cfgfile.read("config.ini")
+from tools.config import cfgfile  # pylint: disable=import-error
 
 logging.basicConfig(
     level=logging.getLevelName(cfgfile.get("core", "verbose"))

@@ -1,9 +1,6 @@
 import logging
-from configparser import ConfigParser
 import click
-
-cfgfile = ConfigParser()
-cfgfile.read("config.ini")
+from tools.config import cfgfile, int_configPath  # pylint: disable=import-error
 
 logging.basicConfig(
     level=logging.getLevelName(cfgfile.get("core", "verbose"))
@@ -21,12 +18,24 @@ def config(index, value):
 
     Read from config: cbcli config user.email
 
-    Write to config: cbcli config user.email test@example.com"""
+    Write config: cbcli config user.email test@example.tld
+
+    Available keys: user.email, user.key
+    """
+    if index == "location":
+        click.echo(int_configPath)
+        return
+
     namespace, key = index.split(".", 1)
-    if value == "" and namespace and key and cfgfile.has_option(namespace, key):
+    if (
+        (value == "" or value is None)
+        and namespace
+        and key
+        and cfgfile.has_option(namespace, key)
+    ):
         click.echo(cfgfile.get(namespace, key))
     else:
-        with open("config.ini", "w") as file:
+        with open(int_configPath, "w") as file:
             if not cfgfile.has_section(namespace):
                 cfgfile.add_section(namespace)
             cfgfile.set(namespace, key, value)
