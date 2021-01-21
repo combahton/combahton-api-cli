@@ -2,6 +2,9 @@
 
 CLI to interact with the API of combahton.net
 
+![Code Quality](https://github.com/combahton/combahton-api-cli/workflows/Lint%20Code%20Base/badge.svg)
+![Build](https://github.com/combahton/combahton-api-cli/workflows/Build/badge.svg)
+
 ## 🚀 Demo
 
 `cbcli` uses a config.ini in the cwd to store details.
