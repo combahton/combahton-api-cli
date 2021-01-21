@@ -36,7 +36,7 @@ jobs:
           
       - name: PyInstaller Linux Build
         run: |
-          pipinstaller --onefile -y ${{ github.workspace }}/src/cbcli.py
+          pyinstaller --onefile -y ${{ github.workspace }}/src/cbcli.py
           
       
       - name: Upload Artifacts
